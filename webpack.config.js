@@ -5,6 +5,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const TersenWebpackPlagin = require('terser-webpack-plugin')
 const OptimizeCssAssetPlugin = require('optimize-css-assets-webpack-plugin')
+const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer')
 
 const isDev = process.env.NODE_ENV === 'development'
 const isProd = !isDev
@@ -64,7 +65,39 @@ const cssLoaders = extra => {
 
     return loaders
 }
-console.log("IS DEV:", isDev)
+
+const plugins = () => {
+    const allPlugins = [
+        new HTMLWebpackPlugin(
+            {
+                template: "./index.html",
+                minify: {
+                    collapseWhitespace: isProd
+                }
+            }
+        ),
+        new CleanWebpackPlugin(),
+        new CopyWebpackPlugin(
+            {
+                patterns: [
+                    {
+                        from: path.resolve(__dirname, 'src/favicon.ico'),
+                        to: path.resolve(__dirname, 'dist')
+                    }
+                ]
+            }
+        ),
+        new MiniCssExtractPlugin({
+            filename: filename('css')
+        })
+    ]
+
+    if (isProd) {
+        allPlugins.push(new BundleAnalyzerPlugin())
+    }
+
+    return allPlugins
+}
 module.exports = {
     context: path.resolve(__dirname, 'src'),
     mode: 'development',
@@ -89,30 +122,7 @@ module.exports = {
         hot: isDev
     },
     devtool: isDev ? 'source-map' : '',
-    plugins: [
-        new HTMLWebpackPlugin(
-            {
-                template: "./index.html",
-                minify: {
-                    collapseWhitespace: isProd
-                }
-            }
-        ),
-        new CleanWebpackPlugin(),
-        new CopyWebpackPlugin(
-            {
-                patterns: [
-                    {
-                        from: path.resolve(__dirname, 'src/favicon.ico'),
-                        to: path.resolve(__dirname, 'dist')
-                    }
-                ]
-            }
-        ),
-        new MiniCssExtractPlugin({
-            filename: filename('css')
-        })
-    ],
+    plugins: plugins(),
     module: {
         rules: [
             {
