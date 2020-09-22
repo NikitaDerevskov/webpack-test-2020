@@ -2,4 +2,6 @@ async function start() {
     await Promise.resolve('just test')
 }
 
-start().then(x => console.log('async await is working'))
+start().then(() => console.log('async await is working'))
+
+const unusedVar = 42

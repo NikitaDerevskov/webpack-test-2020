@@ -36,6 +36,18 @@ const babelOptions = extra => {
 
     return options
 }
+const jsLoaders = () => {
+    const loaders = [{
+        loader: 'babel-loader',
+        options: babelOptions()
+    }]
+
+    if (isDev) {
+        loaders.push('eslint-loader')
+    }
+
+    return loaders
+}
 
 const cssLoaders = extra => {
     const loaders = [
@@ -134,10 +146,7 @@ module.exports = {
             {
                 test: /\.m?js$/,
                 exclude: /node_modules/,
-                use: {
-                    loader: "babel-loader",
-                    options: babelOptions()
-                }
+                use: jsLoaders()
             },
             {
                 test: /\.ts$/,
