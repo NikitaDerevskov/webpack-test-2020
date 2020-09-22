@@ -7,6 +7,7 @@ import csv from './assets/data.csv'
 import * as $ from 'jquery'
 import './styles/less.less'
 import './styles/scss.scss'
+import './babel'
 
 const post = new Post("Webpack Post title", WebpackLogo)
 $('.json').html(post.toString());
