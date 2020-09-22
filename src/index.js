@@ -5,6 +5,8 @@ import WebpackLogo from '@/assets/webpack-logo' // by alias
 import xml from './assets/data.xml'
 import csv from './assets/data.csv'
 import * as $ from 'jquery'
+import './styles/less.less'
+import './styles/scss.scss'
 
 const post = new Post("Webpack Post title", WebpackLogo)
 $('.json').html(post.toString());

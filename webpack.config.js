@@ -8,7 +8,7 @@ const OptimizeCssAssetPlugin = require('optimize-css-assets-webpack-plugin')
 
 const isDev = process.env.NODE_ENV === 'development'
 const isProd = !isDev
-
+const filename = ext => isDev ? `[name].${ext}` : `[name].[hash].${ext}`
 const optimization = () => {
     const config = {
         splitChunks: {
@@ -33,11 +33,11 @@ module.exports = {
         analytics: './analytics.js'
     },
     output: {
-        filename: '[name].[contenthash].js',
+        filename: filename('js'),
         path: path.resolve(__dirname, 'dist')
     },
     resolve: {
-        extensions: ['.js', '.json', '.png'],
+        extensions: ['.js', '.json', '.png', 'less'],
         alias: {
             '@models': path.resolve(__dirname, 'src/models'),
             '@': path.resolve(__dirname, 'src'),
@@ -45,7 +45,7 @@ module.exports = {
     },
     optimization: optimization(),
     devServer: {
-        port: 4200,
+         port: 4200,
         hot: isDev
     },
     plugins: [
@@ -69,7 +69,7 @@ module.exports = {
             }
         ),
         new MiniCssExtractPlugin({
-            filename: '[name].[contenthash].css'
+            filename: filename('css')
         })
     ],
     module: {
@@ -86,6 +86,28 @@ module.exports = {
                     }, 'css-loader']
             },
             {
+                test: /\.less$/,
+                use: [
+                    {
+                        loader: MiniCssExtractPlugin.loader,
+                        options: {
+                            hmr: isDev,
+                            reloadAll: true
+                        }
+                    }, 'css-loader', 'less-loader']
+            },
+            {
+                test: /\.(scss|sass)$/,
+                use: [
+                    {
+                        loader: MiniCssExtractPlugin.loader,
+                        options: {
+                            hmr: isDev,
+                            reloadAll: true
+                        }
+                    }, 'css-loader', 'sass-loader']
+            },
+            {
                 test: /\.(png|jpg|svg|gif)$/,
                 use: ['file-loader']
             },
@@ -100,7 +122,7 @@ module.exports = {
             {
                test: /\.csv$/,
                 use: ['csv-loader']
-            }
+            },
         ]
     }
 }
