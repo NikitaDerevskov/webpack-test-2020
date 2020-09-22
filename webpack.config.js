@@ -25,6 +25,18 @@ const optimization = () => {
     return config
 }
 
+const babelOptions = extra => {
+    const options = {
+        presets: ['@babel/preset-env']
+    }
+
+    if (extra) {
+        options.presets.push(extra)
+    }
+
+    return options
+}
+
 const cssLoaders = extra => {
     const loaders = [
         {
@@ -45,7 +57,7 @@ module.exports = {
     context: path.resolve(__dirname, 'src'),
     mode: 'development',
     entry: {
-        main: ['@babel/polyfill', './index.js'],
+        main: ['@babel/polyfill', './index.jsx'],
         analytics: './analytics.ts'
     },
     output: {
@@ -123,9 +135,7 @@ module.exports = {
                 exclude: /node_modules/,
                 use: {
                     loader: "babel-loader",
-                    options: {
-                        presets: ['@babel/preset-env']
-                    }
+                    options: babelOptions()
                 }
             },
             {
@@ -133,9 +143,15 @@ module.exports = {
                 exclude: /node_modules/,
                 use: {
                     loader: "babel-loader",
-                    options: {
-                        presets: ['@babel/preset-env', '@babel/preset-typescript']
-                    }
+                    options: babelOptions('@babel/preset-typescript')
+                }
+            },
+            {
+                test: /\.jsx$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: "babel-loader",
+                    options: babelOptions('@babel/preset-react')
                 }
             }
         ]
