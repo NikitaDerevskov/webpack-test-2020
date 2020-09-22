@@ -24,6 +24,22 @@ const optimization = () => {
     }
     return config
 }
+
+const cssLoaders = extra => {
+    const loaders = [
+        {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+                hmr: isDev,
+                reloadAll: true
+            }
+        }, 'css-loader']
+    if (extra) {
+        loaders.push(extra)
+    }
+
+    return loaders
+}
 console.log("IS DEV:", isDev)
 module.exports = {
     context: path.resolve(__dirname, 'src'),
@@ -76,36 +92,15 @@ module.exports = {
         rules: [
             {
                 test: /\.css$/,
-                use: [
-                    {
-                        loader: MiniCssExtractPlugin.loader,
-                        options: {
-                            hmr: isDev,
-                            reloadAll: true
-                        }
-                    }, 'css-loader']
+                use: cssLoaders()
             },
             {
                 test: /\.less$/,
-                use: [
-                    {
-                        loader: MiniCssExtractPlugin.loader,
-                        options: {
-                            hmr: isDev,
-                            reloadAll: true
-                        }
-                    }, 'css-loader', 'less-loader']
+                use: cssLoaders('less-loader')
             },
             {
                 test: /\.(scss|sass)$/,
-                use: [
-                    {
-                        loader: MiniCssExtractPlugin.loader,
-                        options: {
-                            hmr: isDev,
-                            reloadAll: true
-                        }
-                    }, 'css-loader', 'sass-loader']
+                use: cssLoaders('sass-loader')
             },
             {
                 test: /\.(png|jpg|svg|gif)$/,
